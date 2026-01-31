@@ -4,9 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "node src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "",
-    "test": ""
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +21,12 @@
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.1.0",
+    "@types/supertest": "^6.0.3",
     "dotenv": "^17.2.3",
-    "prisma": "^7.3.0"
+    "dotenv-cli": "^11.0.0",
+    "prisma": "^7.3.0",
+    "supertest": "^7.2.2",
+    "tsx": "^4.21.0",
+    "vitest": "^4.0.18"
   }
 }

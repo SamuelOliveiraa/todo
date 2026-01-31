@@ -64,15 +64,15 @@ A importação de dados pode ser feita através de um script dedicado (`import-c
 
 ### Rotas da API
 
-- [ ] Criar tarefa (`POST /tasks`)
-- [ ] Listar tarefas (`GET /tasks`)
-- [ ] Busca por filtro no título e descrição
-- [ ] Atualizar tarefa (`PUT /tasks/:id`)
-- [ ] Validar ID no update
-- [ ] Remover tarefa (`DELETE /tasks/:id`)
-- [ ] Validar ID na remoção
-- [ ] Marcar como completa/pendente (`PATCH /tasks/:id/complete`)
-- [ ] Validar ID no patch
+- [ X ] Criar tarefa (`POST /tasks`)
+- [ X ] Listar tarefas (`GET /tasks`)
+- [ X ] Busca por filtro no título e descrição
+- [ X ] Atualizar tarefa (`PUT /tasks/:id`)
+- [ X ] Validar ID no update
+- [ X ] Remover tarefa (`DELETE /tasks/:id`)
+- [ X ] Validar ID na remoção
+- [ X ] Marcar como completa/pendente (`PATCH /tasks/:id/complete`)
+- [ X ] Validar ID no patch
 
 ### Importação de Arquivos
 

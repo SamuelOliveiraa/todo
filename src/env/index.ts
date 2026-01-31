@@ -1,9 +1,15 @@
-import "dotenv/config";
+import { config } from "dotenv";
 import { z } from "zod";
+
+const envFile = process.env.NODE_ENV === "test" ? ".env.test" : ".env";
+
+config({ path: envFile });
+
+console.log(`Carregado ambiente: ${process.env.NODE_ENV} usando ${envFile} `);
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
-  PORT: z.number().default(3000)
+  PORT: z.coerce.number().default(3000)
 });
 
 const envConfig = envSchema.safeParse(process.env);
