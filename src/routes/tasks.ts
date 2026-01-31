@@ -1,37 +1,33 @@
 import type { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma.ts";
 import type { TaskPost, TaskPut } from "../types/task.type.ts";
+import { Prisma } from "../generated/prisma/client.ts";
 
 export async function tasksRoute(app: FastifyInstance) {
   app.get<{ Querystring: { search?: string } }>("/", async (request, reply) => {
     try {
-      const { query } = request;
+      const { search } = request.query;
 
-      let data = [];
+      const data = await prisma.tasks.findMany({
+        where: search
+          ? {
+              OR: [
+                {
+                  title: {
+                    contains: search
+                  }
+                },
+                {
+                  description: {
+                    contains: search
+                  }
+                }
+              ]
+            }
+          : {},
+        orderBy: { created_at: "desc" }
+      });
 
-      if (query && query.search) {
-        data = await prisma.tasks.findMany({
-          where: {
-            OR: [
-              {
-                title: {
-                  contains: query.search
-                }
-              },
-              {
-                description: {
-                  contains: query.search
-                }
-              }
-            ]
-          },
-          orderBy: { created_at: "desc" }
-        });
-      } else {
-        data = await prisma.tasks.findMany({
-          orderBy: { created_at: "desc" }
-        });
-      }
       reply.send(data);
     } catch (error) {
       console.log(error);
@@ -79,10 +75,23 @@ export async function tasksRoute(app: FastifyInstance) {
         return;
       }
 
-      await prisma.tasks.delete({ where: { id } });
+      const task = await prisma.tasks.findUnique({
+        where: { id }
+      });
 
-      reply.status(204).send();
+      if (!task) {
+        return reply.status(404).send({ message: "Task not found" });
+      } else {
+        await prisma.tasks.delete({ where: { id } });
+
+        reply.status(204).send();
+      }
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2025") {
+          return reply.status(404).send({ message: "Task not found" });
+        }
+      }
       console.log(error);
       return reply.status(500).send({
         message:
@@ -129,6 +138,11 @@ export async function tasksRoute(app: FastifyInstance) {
 
         reply.status(200).send({ message: "Task updated successfully" });
       } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (error.code === "P2025") {
+            return reply.status(404).send({ message: "Task not found" });
+          }
+        }
         console.log(error);
         return reply.status(500).send({
           message:
@@ -165,6 +179,11 @@ export async function tasksRoute(app: FastifyInstance) {
 
         reply.status(200).send({ message: "Task completed successfully" });
       } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (error.code === "P2025") {
+            return reply.status(404).send({ message: "Task not found" });
+          }
+        }
         console.log(error);
         return reply.status(500).send({
           message:
