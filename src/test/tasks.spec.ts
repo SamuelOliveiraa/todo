@@ -1,9 +1,9 @@
 import { it, beforeAll, afterAll, describe, expect, beforeEach } from "vitest";
-import { app } from "../src/app.ts";
 import supertest from "supertest";
 import { execSync } from "node:child_process";
-import { prisma } from "../src/lib/prisma.ts";
 import { randomUUID } from "node:crypto";
+import { app } from "../app.ts";
+import { prisma } from "../lib/prisma.ts";
 
 describe("Tasks routes", () => {
   beforeAll(async () => {
