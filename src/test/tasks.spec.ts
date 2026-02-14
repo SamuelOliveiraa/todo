@@ -310,4 +310,28 @@ describe("Tasks routes", () => {
       await supertest(app.server).delete(`/tasks/${id}`).expect(404);
     });
   });
+
+  describe("CSV Files", () => {
+    it("should be able to export tasks to CSV", async () => {
+      await supertest(app.server)
+        .post("/tasks")
+        .send({
+          title: "Teste 1",
+          description:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's."
+        })
+        .expect(201);
+
+      const tasksCSV = await supertest(app.server)
+        .get("/tasks/export_csv")
+        .expect(200);
+
+      console.log(tasksCSV);
+
+      expect(tasksCSV.header["content-type"]).toBe("text/csv");
+      expect(tasksCSV.header["content-disposition"]).toContain("attachment");
+
+      expect(tasksCSV.text).toContain("Teste 1");
+    });
+  });
 });

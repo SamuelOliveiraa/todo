@@ -4,24 +4,22 @@ Este projeto consiste no desenvolvimento de uma API em Node.js para o gerenciame
 
 ---
 
-## 📋 Sobre o Desafio
+## 💻 Tecnologias Utilizadas
 
-A API foi projetada para gerenciar um fluxo de tarefas, permitindo a persistência de dados e a manipulação em massa através de scripts de importação.
-
-### Estrutura de uma Tarefa
-
-Cada tarefa possui a seguinte estrutura de dados:
-
-- **id**: Identificador único.
-- **title**: Título da tarefa.
-- **description**: Descrição detalhada.
-- **completed_at**: Data de conclusão (inicia como `null`).
-- **created_at**: Data de criação.
-- **updated_at**: Data da última atualização.
+- **Node.js**: Ambiente de execução para o servidor.
+- **Fastify**: Framework web para a construção da API, conhecido por sua alta performance.
+- **Prisma**: ORM para a interação com o banco de dados.
+- **SQLite**: Banco de dados relacional utilizado para o armazenamento das tarefas.
+- **TypeScript**: Superset do JavaScript que adiciona tipagem estática ao código.
+- **Zod**: Biblioteca para validação de schemas de dados.
+- **Vitest**: Framework de testes para garantir a qualidade do código.
+- **Supertest**: Biblioteca para testar a API HTTP.
 
 ---
 
-## 🛣 Rotas e Regras de Negócio
+## ✨ Funcionalidades
+
+A API oferece as seguintes funcionalidades:
 
 | Método     | Rota                  | Descrição                                                       |
 | :--------- | :-------------------- | :-------------------------------------------------------------- |
@@ -30,52 +28,76 @@ Cada tarefa possui a seguinte estrutura de dados:
 | **PUT**    | `/tasks/:id`          | Atualiza o `title` e/ou `description` de uma tarefa existente.  |
 | **DELETE** | `/tasks/:id`          | Remove uma tarefa pelo ID.                                      |
 | **PATCH**  | `/tasks/:id/complete` | Alterna o status de conclusão da tarefa.                        |
-
-### Regras Adicionais
-
-- **Validação de ID**: Para as rotas `PUT`, `DELETE` e `PATCH`, a API valida se o registro existe no banco de dados. Caso contrário, retorna uma mensagem informando que o registro não existe.
-- **Datas Automáticas**: Os campos `created_at` e `updated_at` são gerenciados automaticamente pela aplicação.
+| **POST**   | `/tasks/upload_csv`   | Cria novas tarefas a partir de um arquivo CSV.                  |
+| **GET**    | `/tasks/export_csv`   | Exporta as tarefas para um arquivo CSV.                         |
 
 ---
 
-## 📄 Importação via CSV
+## 🧪 Testes
 
-A importação de dados pode ser feita através de um script dedicado (`import-csv.js`).
+Os testes da aplicação foram desenvolvidos com o **Vitest** e o **Supertest**. Eles garantem o correto funcionamento de todas as rotas da API, cobrindo os seguintes cenários:
 
-1.  **Ferramenta**: Utiliza a biblioteca `csv-parse`.
-2.  **Funcionamento**: O script lê o arquivo CSV, utiliza um iterador assíncrono (`for await`) e, para cada linha, realiza uma requisição `POST` para a rota `/tasks`.
-3.  **Formato do CSV**:
-    ```csv
-    title,description
-    Task 01,Descrição da Task 01
-    Task 02,Descrição da Task 02
+- Criação de tarefas.
+- Listagem de todas as tarefas.
+- Filtragem de tarefas por título e descrição.
+- Atualização de tarefas.
+- Remoção de tarefas.
+- Marcação de tarefas como concluídas.
+- Exportação de tarefas para CSV.
+
+Para executar os testes, utilize o comando:
+
+```bash
+npm run test
+```
+
+---
+
+## 🚀 Como Executar o Projeto
+
+1.  **Clone o repositório:**
+
+    ```bash
+    git clone https://github.com/seu-usuario/seu-repositorio.git
+    cd seu-repositorio
+    ```
+
+2.  **Instale as dependências:**
+
+    ```bash
+    npm install
+    ```
+
+3.  **Configure as variáveis de ambiente:**
+
+    Crie um arquivo `.env` na raiz do projeto, utilizando o `.env.example` como referência.
+
+4.  **Execute as migrações do banco de dados:**
+
+    ```bash
+    npx prisma migrate dev
+    ```
+
+5.  **Inicie o servidor:**
+
+    ```bash
+    npm run dev
     ```
 
 ---
 
-## 💡 Sugestões de Melhoria (Indo Além)
+## 📄 Importação e Exportação via CSV
 
-- [ ] Validar se as propriedades `title` e `description` estão presentes no corpo das requisições `POST` e `PUT`.
-- [ ] Implementar mensagens de erro customizadas para registros não encontrados.
+### Importação
 
----
+A API permite a criação de tarefas em massa através do upload de um arquivo CSV pela rota `POST /tasks/upload_csv`. O arquivo deve seguir o seguinte formato:
 
-## ✅ Checklist de Entrega
+```csv
+title,description
+Task 01,Descrição da Task 01
+Task 02,Descrição da Task 02
+```
 
-### Rotas da API
+### Exportação
 
-- [ X ] Criar tarefa (`POST /tasks`)
-- [ X ] Listar tarefas (`GET /tasks`)
-- [ X ] Busca por filtro no título e descrição
-- [ X ] Atualizar tarefa (`PUT /tasks/:id`)
-- [ X ] Validar ID no update
-- [ X ] Remover tarefa (`DELETE /tasks/:id`)
-- [ X ] Validar ID na remoção
-- [ X ] Marcar como completa/pendente (`PATCH /tasks/:id/complete`)
-- [ X ] Validar ID no patch
-
-### Importação de Arquivos
-
-- [ ] Criar script `import-csv.js`
-- [ ] Implementar leitura com `csv-parse` e iterador async
-- [ ] Enviar requisições POST para cada linha lida
+É possível exportar as tarefas cadastradas para um arquivo CSV através da rota `GET /tasks/export_csv`.

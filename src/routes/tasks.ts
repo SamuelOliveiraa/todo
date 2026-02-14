@@ -3,7 +3,11 @@ import { prisma } from "../lib/prisma.ts";
 import type { TaskPost, TaskPut } from "../types/task.type.ts";
 import { Prisma } from "../generated/prisma/client.ts";
 
+import { parse } from "csv-parse";
+import { stringify } from "csv-stringify/sync";
+
 export async function tasksRoute(app: FastifyInstance) {
+  // Return all tasks or search for tasks that match the search query by title or description
   app.get<{ Querystring: { search?: string } }>("/", async (request, reply) => {
     try {
       const { search } = request.query;
@@ -30,7 +34,6 @@ export async function tasksRoute(app: FastifyInstance) {
 
       reply.send(data);
     } catch (error) {
-      console.log(error);
       return reply.status(500).send({
         message:
           "An error occurred during fetching tasks, please try again later."
@@ -38,6 +41,7 @@ export async function tasksRoute(app: FastifyInstance) {
     }
   });
 
+  // Create a new task
   app.post<{ Body: TaskPost }>("/", async (request, reply) => {
     try {
       const { body } = request;
@@ -66,6 +70,7 @@ export async function tasksRoute(app: FastifyInstance) {
     }
   });
 
+  // Delete a task by ID
   app.delete<{ Params: { id: string } }>("/:id", async (request, reply) => {
     try {
       const { id } = request.params;
@@ -75,17 +80,9 @@ export async function tasksRoute(app: FastifyInstance) {
         return;
       }
 
-      const task = await prisma.tasks.findUnique({
-        where: { id }
-      });
+      await prisma.tasks.delete({ where: { id } });
 
-      if (!task) {
-        return reply.status(404).send({ message: "Task not found" });
-      } else {
-        await prisma.tasks.delete({ where: { id } });
-
-        reply.status(204).send();
-      }
+      reply.status(204).send();
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === "P2025") {
@@ -100,6 +97,7 @@ export async function tasksRoute(app: FastifyInstance) {
     }
   });
 
+  // Update a title and description of a task by ID
   app.put<{ Params: { id: string }; Body: TaskPut }>(
     "/:id",
     async (request, reply) => {
@@ -152,6 +150,7 @@ export async function tasksRoute(app: FastifyInstance) {
     }
   );
 
+  // Change the status of a task by ID
   app.patch<{ Params: { id: string } }>(
     "/:id/complete",
     async (request, reply) => {
@@ -184,7 +183,7 @@ export async function tasksRoute(app: FastifyInstance) {
             return reply.status(404).send({ message: "Task not found" });
           }
         }
-        console.log(error);
+        console.error("Erro ao atualizar tarefa:", error);
         return reply.status(500).send({
           message:
             "An error occurred during updating of task, please try again later."
@@ -192,4 +191,78 @@ export async function tasksRoute(app: FastifyInstance) {
       }
     }
   );
+
+  // Create a new task from a CSV file
+  app.post("/upload_csv", async (request, reply) => {
+    const fileData = await request.file();
+
+    if (!fileData) {
+      reply.status(400).send({ message: "File is required" });
+      return;
+    }
+
+    if (fileData.mimetype !== "text/csv") {
+      reply.status(400).send({ message: "Invalid file type" });
+      return;
+    }
+
+    const csvStream = fileData.file.pipe(
+      parse({ columns: true, delimiter: "," })
+    );
+
+    for await (const record of csvStream) {
+      const { title, description } = record;
+
+      if (!title || !description) {
+        console.warn("Invalid Line: ", record);
+        continue;
+      }
+
+      try {
+        await prisma.tasks.createMany({
+          data: {
+            title,
+            description
+          }
+        });
+      } catch (error) {
+        console.error("Erro ao criar tarefa:", error);
+      }
+    }
+
+    return reply.status(201).send({ message: "CSV uploaded successfully" });
+  });
+
+  app.get("/export_csv", async (request, reply) => {
+    try {
+      const tasks = await prisma.tasks.findMany({
+        orderBy: { created_at: "desc" }
+      });
+
+      // Format tasks data for CSV
+      const tasksDataForCSV = tasks.map(task => ({
+        title: task.title,
+        description: task.description,
+        completed_at: task.completed_at ? task.completed_at.toISOString() : null
+      }));
+
+      // Convert tasks data to CSV string
+      const csvString = stringify(tasksDataForCSV, {
+        header: true,
+        delimiter: ",",
+        bom: true
+      });
+
+      reply
+        .header("Content-Type", "text/csv")
+        .header("Content-Disposition", "attachment; filename=tasks.csv")
+        .send(csvString);
+    } catch (error) {
+      console.error("Erro ao exportar CSV:", error);
+      return reply.status(500).send({
+        message:
+          "An error occurred during exporting of CSV, please try again later."
+      });
+    }
+  });
 }
