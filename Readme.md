@@ -1,51 +1,51 @@
-# 🚀 Desafio: Task Manager API
+# 🚀 Challenge: Task Manager API
 
-Este projeto consiste no desenvolvimento de uma API em Node.js para o gerenciamento de tarefas (tasks). O objetivo principal é aplicar conceitos fundamentais de **CRUD**, manipulação de arquivos e fluxos de dados (streams).
-
----
-
-## 💻 Tecnologias Utilizadas
-
-- **Node.js**: Ambiente de execução para o servidor.
-- **Fastify**: Framework web para a construção da API, conhecido por sua alta performance.
-- **Prisma**: ORM para a interação com o banco de dados.
-- **SQLite**: Banco de dados relacional utilizado para o armazenamento das tarefas.
-- **TypeScript**: Superset do JavaScript que adiciona tipagem estática ao código.
-- **Zod**: Biblioteca para validação de schemas de dados.
-- **Vitest**: Framework de testes para garantir a qualidade do código.
-- **Supertest**: Biblioteca para testar a API HTTP.
+This project consists of the development of a Node.js API for task management. The main objective is to apply fundamental concepts of **CRUD**, file manipulation, and data streams.
 
 ---
 
-## ✨ Funcionalidades
+## 💻 Technologies Used
 
-A API oferece as seguintes funcionalidades:
-
-| Método     | Rota                  | Descrição                                                       |
-| :--------- | :-------------------- | :-------------------------------------------------------------- |
-| **POST**   | `/tasks`              | Cria uma nova tarefa com `title` e `description`.               |
-| **GET**    | `/tasks`              | Lista todas as tarefas (suporta busca por título ou descrição). |
-| **PUT**    | `/tasks/:id`          | Atualiza o `title` e/ou `description` de uma tarefa existente.  |
-| **DELETE** | `/tasks/:id`          | Remove uma tarefa pelo ID.                                      |
-| **PATCH**  | `/tasks/:id/complete` | Alterna o status de conclusão da tarefa.                        |
-| **POST**   | `/tasks/upload_csv`   | Cria novas tarefas a partir de um arquivo CSV.                  |
-| **GET**    | `/tasks/export_csv`   | Exporta as tarefas para um arquivo CSV.                         |
+- **Node.js**: Execution environment for the server.
+- **Fastify**: Web framework for building the API, known for its high performance.
+- **Prisma**: ORM for interacting with the database.
+- **SQLite**: Relational database used for storing tasks.
+- **TypeScript**: Superset of JavaScript that adds static typing to the code.
+- **Zod**: Library for data schema validation.
+- **Vitest**: Testing framework to ensure code quality.
+- **Supertest**: Library for testing the HTTP API.
 
 ---
 
-## 🧪 Testes
+## ✨ Features
 
-Os testes da aplicação foram desenvolvidos com o **Vitest** e o **Supertest**. Eles garantem o correto funcionamento de todas as rotas da API, cobrindo os seguintes cenários:
+The API offers the following features:
 
-- Criação de tarefas.
-- Listagem de todas as tarefas.
-- Filtragem de tarefas por título e descrição.
-- Atualização de tarefas.
-- Remoção de tarefas.
-- Marcação de tarefas como concluídas.
-- Exportação de tarefas para CSV.
+| Method     | Route                 | Description                                                   |
+| :--------- | :-------------------- | :------------------------------------------------------------ |
+| **POST**   | `/tasks`              | Creates a new task with `title` and `description`.            |
+| **GET**    | `/tasks`              | Lists all tasks (supports searching by title or description). |
+| **PUT**    | `/tasks/:id`          | Updates the `title` and/or `description` of an existing task. |
+| **DELETE** | `/tasks/:id`          | Removes a task by ID.                                         |
+| **PATCH**  | `/tasks/:id/complete` | Toggles the task's completion status.                         |
+| **POST**   | `/tasks/upload_csv`   | Creates new tasks from a CSV file.                            |
+| **GET**    | `/tasks/export_csv`   | Exports tasks to a CSV file.                                  |
 
-Para executar os testes, utilize o comando:
+---
+
+## 🧪 Tests
+
+The application tests were developed with **Vitest** and **Supertest**. They ensure the correct functioning of all API routes, covering the following scenarios:
+
+- Task creation.
+- Listing all tasks.
+- Filtering tasks by title and description.
+- Updating tasks.
+- Deleting tasks.
+- Marking tasks as complete.
+- Exporting tasks to CSV.
+
+To run the tests, use the command:
 
 ```bash
 npm run test
@@ -53,32 +53,32 @@ npm run test
 
 ---
 
-## 🚀 Como Executar o Projeto
+## 🚀 How to Run the Project
 
-1.  **Clone o repositório:**
+1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/seu-usuario/seu-repositorio.git
-    cd seu-repositorio
+    git clone https://github.com/your-user/your-repository.git
+    cd your-repository
     ```
 
-2.  **Instale as dependências:**
+2.  **Install the dependencies:**
 
     ```bash
     npm install
     ```
 
-3.  **Configure as variáveis de ambiente:**
+3.  **Configure the environment variables:**
 
-    Crie um arquivo `.env` na raiz do projeto, utilizando o `.env.example` como referência.
+    Create a `.env` file in the root of the project, using `.env.example` as a reference.
 
-4.  **Execute as migrações do banco de dados:**
+4.  **Run the database migrations:**
 
     ```bash
     npx prisma migrate dev
     ```
 
-5.  **Inicie o servidor:**
+5.  **Start the server:**
 
     ```bash
     npm run dev
@@ -86,18 +86,18 @@ npm run test
 
 ---
 
-## 📄 Importação e Exportação via CSV
+## 📄 Import and Export via CSV
 
-### Importação
+### Import
 
-A API permite a criação de tarefas em massa através do upload de um arquivo CSV pela rota `POST /tasks/upload_csv`. O arquivo deve seguir o seguinte formato:
+The API allows for the bulk creation of tasks by uploading a CSV file through the `POST /tasks/upload_csv` route. The file must follow this format:
 
 ```csv
 title,description
-Task 01,Descrição da Task 01
-Task 02,Descrição da Task 02
+Task 01,Description of Task 01
+Task 02,Description of Task 02
 ```
 
-### Exportação
+### Export
 
-É possível exportar as tarefas cadastradas para um arquivo CSV através da rota `GET /tasks/export_csv`.
+It is possible to export the registered tasks to a CSV file through the `GET /tasks/export_csv` route.
